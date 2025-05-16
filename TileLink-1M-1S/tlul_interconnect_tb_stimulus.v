@@ -15,36 +15,36 @@ module tlul_interconnect_tb(
   output reg                 clk_100,
   output reg                 clk_24,
   output reg                 reset,
-  output reg [2:0]           tb_master_a_valid,
-  output reg [3*OPCODE_WIDTH-1:0] tb_master_a_opcode,
-  output reg [3*PARAM_WIDTH-1:0]  tb_master_a_param,
-  output reg [3*SIZE_WIDTH-1:0]   tb_master_a_size,
-  output reg [3*SRC_WIDTH-1:0]    tb_master_a_source,
-  output reg [3*ADDR_WIDTH-1:0]   tb_master_a_address,
-  output reg [3*MASK_WIDTH-1:0]   tb_master_a_mask,
-  output reg [3*DATA_WIDTH-1:0]   tb_master_a_data,
-  output reg [2:0]           tb_master_d_ready,
+  output reg                 tb_master_a_valid,
+  output reg [OPCODE_WIDTH-1:0] tb_master_a_opcode,
+  output reg [PARAM_WIDTH-1:0]  tb_master_a_param,
+  output reg [SIZE_WIDTH-1:0]   tb_master_a_size,
+  output reg [SRC_WIDTH-1:0]    tb_master_a_source,
+  output reg [ADDR_WIDTH-1:0]   tb_master_a_address,
+  output reg [MASK_WIDTH-1:0]   tb_master_a_mask,
+  output reg [DATA_WIDTH-1:0]   tb_master_a_data,
+  output reg                 tb_master_d_ready,
   output reg                 tb_slave_a_valid,
   output reg [OPCODE_WIDTH-1:0] tb_slave_a_opcode,
   output reg [PARAM_WIDTH-1:0]  tb_slave_a_param,
   output reg [SIZE_WIDTH-1:0]   tb_slave_a_size,
   output reg [SRC_WIDTH-1:0]    tb_slave_a_source,
-  output reg [3*ADDR_WIDTH-1:0] tb_slave_a_address,
-  output reg [3*MASK_WIDTH-1:0] tb_slave_a_mask,
-  output reg [3*DATA_WIDTH-1:0] tb_slave_a_data,
-  output reg                 tb_slave_d_ready
+  output reg [ADDR_WIDTH-1:0] tb_slave_a_address,
+  output reg [MASK_WIDTH-1:0] tb_slave_a_mask,
+  output reg [DATA_WIDTH-1:0] tb_slave_a_data,
+  output reg                  tb_slave_d_ready
 );
 
   // Internal wires for DUT-driven signals (inputs to testbench)
-  wire [2:0]                tb_master_a_ready;
-  wire [2:0]                tb_master_d_valid;
-  wire [3*OPCODE_WIDTH-1:0] tb_master_d_opcode;
-  wire [3*PARAM_WIDTH-1:0]  tb_master_d_param;
-  wire [3*SIZE_WIDTH-1:0]   tb_master_d_size;
-  wire [3*SRC_WIDTH-1:0]    tb_master_d_source;
-  wire [3*SINK_WIDTH-1:0]   tb_master_d_sink;
-  wire [3*DATA_WIDTH-1:0]   tb_master_d_data;
-  wire [2:0]                tb_master_d_error;
+  wire                    tb_master_a_ready;
+  wire                    tb_master_d_valid;
+  wire [OPCODE_WIDTH-1:0] tb_master_d_opcode;
+  wire [PARAM_WIDTH-1:0]  tb_master_d_param;
+  wire [SIZE_WIDTH-1:0]   tb_master_d_size;
+  wire [SRC_WIDTH-1:0]    tb_master_d_source;
+  wire [SINK_WIDTH-1:0]   tb_master_d_sink;
+  wire [DATA_WIDTH-1:0]   tb_master_d_data;
+  wire                    tb_master_d_error;
 
   wire                      tb_slave_a_ready;
   wire                      tb_slave_d_valid;
@@ -72,9 +72,7 @@ module tlul_interconnect_tb(
   //===========================================================================  
   // Initial Setup and Stimulus  
   //===========================================================================  
-  integer i;
-  integer master_id;
-  integer m;
+
 
   initial begin
     // Initialize signals (other than clocks, which are generated above)
@@ -85,9 +83,9 @@ module tlul_interconnect_tb(
     tb_master_a_size   = 0;
     tb_master_a_source = 0;
     tb_master_a_address = 0;
-    tb_master_a_mask   = {3*MASK_WIDTH{1'b1}};
+    tb_master_a_mask   = {MASK_WIDTH{1'b1}};
     tb_master_a_data   = 0;
-    tb_master_d_ready  = 3'b111; // Masters ready for responses
+    tb_master_d_ready  = 1; // Masters ready for responses
 
     tb_slave_a_valid   = 0;
     tb_slave_a_opcode  = 0;
@@ -97,63 +95,39 @@ module tlul_interconnect_tb(
     tb_slave_a_address = 0;
     tb_slave_a_mask    = {MASK_WIDTH{1'b1}};
     tb_slave_a_data    = 0;
-    tb_slave_d_ready   = 0;
+    tb_slave_d_ready   = 1;
 
-    // Initialize indices
-    master_id = 0;
-    m = 1;
-   
+
     // Deassert reset after 20 time units
     #20 reset = 0;
    
     //--- Begin Stimulus Sequence ---
     // Stimulus for Master 0: Issue a Get request
-    master_id = 0;
-    tb_master_a_valid[master_id] = 1;
-    tb_master_a_opcode[master_id*OPCODE_WIDTH +: OPCODE_WIDTH] = 3'd4; // Get operation
-    tb_master_a_address[master_id*ADDR_WIDTH +: ADDR_WIDTH] = 32'h0000_1000;
-    tb_master_a_size[master_id*SIZE_WIDTH +: SIZE_WIDTH] = 3'd2; // 4-byte transfer
-    tb_master_a_data[master_id*DATA_WIDTH +: DATA_WIDTH] = 32'hDEAD_BEEF;
-    wait(tb_master_a_ready[master_id]);
+    #30;
+    tb_master_a_valid = 1;
+    tb_master_a_opcode = 3'd4; // Get operation
+    tb_master_a_address = 32'h0000_1000;
+    tb_master_a_size = 3'd2; // 4-byte transfer
+    tb_master_a_data = 32'hDEAD_BEEF;
+    
+    wait(tb_master_a_ready);
     @(posedge clk_100);
-    tb_master_a_valid[master_id] = 0;
+    tb_master_a_valid = 0;
    
-    // Stimulus for Master 1: Issue a PutFullData request
-    master_id = 1;
-    tb_master_a_valid[master_id] = 1;
-    tb_master_a_opcode[master_id*OPCODE_WIDTH +: OPCODE_WIDTH] = 3'd0; // PutFullData
-    tb_master_a_address[master_id*ADDR_WIDTH +: ADDR_WIDTH] = 32'h0000_2000;
-    tb_master_a_size[master_id*SIZE_WIDTH +: SIZE_WIDTH] = 3'd2;
-    tb_master_a_data[master_id*DATA_WIDTH +: DATA_WIDTH] = 32'hCAFEBABE;
-    wait(tb_master_a_ready[master_id]);
-    @(posedge clk_100);
-    tb_master_a_valid[master_id] = 0;
-   
-    // Stimulus for Master 2: Issue a PutPartialData request
-    m = 2;
-    tb_master_a_valid[m] = 1;
-    tb_master_a_opcode[m*OPCODE_WIDTH +: OPCODE_WIDTH] = 3'd1; // PutPartialData
-    tb_master_a_address[m*ADDR_WIDTH +: ADDR_WIDTH] = 32'h0000_3000;
-    tb_master_a_size[m*SIZE_WIDTH +: SIZE_WIDTH] = 3'd2;
-    tb_master_a_data[m*DATA_WIDTH +: DATA_WIDTH] = 32'h12345678;
-    wait(tb_master_a_ready[m]);
-    @(posedge clk_100);
-    tb_master_a_valid[m] = 0;
-   
+    //wait for response
+    #500
+
     // Additional stimulus can be added here (simulate burst transactions, etc.)
     // ...
    
     // End simulation after a sufficient delay
-    #100000 $finish;
+    #1000 $finish;
   end
 
   //===========================================================================  
   // DUT Instantiation  
   //===========================================================================  
   tlul_interconnect_top #(
-    .SOURCE_ID_WIDTH(SRC_WIDTH),
-    .SLAVE_BASE(32'h0000_0000),
-    .SLAVE_MASK(32'hFFFF_F000),
     .ADDR_WIDTH(ADDR_WIDTH),
     .DATA_WIDTH(DATA_WIDTH),
     .MASK_WIDTH(MASK_WIDTH),

@@ -1,6 +1,6 @@
 // tilelink_cdc_adapter.sv - Bridges 100 MHz and 24 MHz clock domains for TL-UL  
 // Uses asynchronous FIFO for Channel A (request) and Channel D (response).
-
+`timescale 1ns/1ps
 `include "async_fifo.v"
 
 module tilelink_cdc_adapter #(

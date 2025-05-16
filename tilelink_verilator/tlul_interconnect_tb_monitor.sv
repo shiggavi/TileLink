@@ -5,7 +5,7 @@ module tlul_interconnect_monitor #(
   parameter ADDR_WIDTH   = 32,
   parameter MASK_WIDTH   = DATA_WIDTH/8,
   parameter SIZE_WIDTH   = 3,
-  parameter SRC_WIDTH    = 1,
+  parameter SRC_WIDTH    = 2,
   parameter SINK_WIDTH   = 1,
   parameter OPCODE_WIDTH = 3,
   parameter PARAM_WIDTH  = 3
@@ -14,24 +14,24 @@ module tlul_interconnect_monitor #(
   input                         reset,
   
   // Master Interface Signals (DUT -> Master)
-  input                    master_a_valid,
-  input                    master_a_ready,
-  input  [ADDR_WIDTH-1:0]     master_a_address,
-  input  [DATA_WIDTH-1:0]     master_a_data,
-  input  [OPCODE_WIDTH-1:0]   master_a_opcode,
-  input  [SIZE_WIDTH-1:0]     master_a_size,
+  input  [2:0]                  master_a_valid,
+  input  [2:0]                  master_a_ready,
+  input  [3*ADDR_WIDTH-1:0]     master_a_address,
+  input  [3*DATA_WIDTH-1:0]     master_a_data,
+  input  [3*OPCODE_WIDTH-1:0]   master_a_opcode,
+  input  [3*SIZE_WIDTH-1:0]     master_a_size,
   
-  input                    master_d_valid,
-  input  [DATA_WIDTH-1:0]     master_d_data,
-  input  [OPCODE_WIDTH-1:0]   master_d_opcode,
-  input  [SIZE_WIDTH-1:0]     master_d_size,
-  input                    master_d_error,
+  input  [2:0]                  master_d_valid,
+  input  [3*DATA_WIDTH-1:0]     master_d_data,
+  input  [3*OPCODE_WIDTH-1:0]   master_d_opcode,
+  input  [3*SIZE_WIDTH-1:0]     master_d_size,
+  input  [2:0]                  master_d_error,
 
   // Slave Interface Signals (Slave -> DUT)
   input                        slave_a_valid,
   input                        slave_a_ready,
-  input  [ADDR_WIDTH-1:0]    slave_a_address,
-  input  [DATA_WIDTH-1:0]    slave_a_data,
+  input  [3*ADDR_WIDTH-1:0]    slave_a_address,
+  input  [3*DATA_WIDTH-1:0]    slave_a_data,
   input  [OPCODE_WIDTH-1:0]    slave_a_opcode,
   input  [SIZE_WIDTH-1:0]      slave_a_size,
 
@@ -42,31 +42,37 @@ module tlul_interconnect_monitor #(
   input                        slave_d_error
 );
 
-
+  integer i;
 
   // Monitor Master A Channel Transactions
   always @(posedge clk) begin
-    if (!reset && master_a_valid && master_a_ready) begin
-          $display("[%0t] Master A-Request: Opcode=%0d Addr=0x%08x Size=%0d Data=0x%08x",
-                   $time,
-                   master_a_opcode,
-                   master_a_address,
-                   master_a_size,
-                   master_a_data);
+    if (!reset) begin
+      for (i = 0; i < 3; i = i + 1) begin
+        if (master_a_valid[i] && master_a_ready[i]) begin
+          $display("[%0t] Master%0d A-Request: Opcode=%0d Addr=0x%08x Size=%0d Data=0x%08x",
+                   $time, i,
+                   master_a_opcode[i*OPCODE_WIDTH +: OPCODE_WIDTH],
+                   master_a_address[i*ADDR_WIDTH +: ADDR_WIDTH],
+                   master_a_size[i*SIZE_WIDTH +: SIZE_WIDTH],
+                   master_a_data[i*DATA_WIDTH +: DATA_WIDTH]);
+        end
+      end
     end
   end
-    
-  
 
   // Monitor Master D Channel Responses
   always @(posedge clk) begin
-    if (!reset && master_d_valid) begin
-          $display("[%0t] Master D-Response: Opcode=%0d Data=0x%08x Size=%0d Error=%0b",
-                   $time,
-                   master_d_opcode,
-                   master_d_data,
-                   master_d_size,
-                   master_d_error);
+    if (!reset) begin
+      for (i = 0; i < 3; i = i + 1) begin
+        if (master_d_valid[i]) begin
+          $display("[%0t] Master%0d D-Response: Opcode=%0d Data=0x%08x Size=%0d Error=%0b",
+                   $time, i,
+                   master_d_opcode[i*OPCODE_WIDTH +: OPCODE_WIDTH],
+                   master_d_data[i*DATA_WIDTH +: DATA_WIDTH],
+                   master_d_size[i*SIZE_WIDTH +: SIZE_WIDTH],
+                   master_d_error[i]);
+        end
+      end
     end
   end
 

@@ -1,7 +1,7 @@
 // tlul_interconnect_top.sv - Top-level interconnect for TL-UL  
 // Fixed 3 masters (CPU, acc0, acc1) and 1 slave (GPIO); TL-UL (Uncached Lightweight) only.
 
-
+`timescale 1ns/1ps
 
 module tlul_interconnect_top #(
   parameter SOURCE_ID_WIDTH  = 2,                // Width of Source ID field

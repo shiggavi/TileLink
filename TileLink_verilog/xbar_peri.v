@@ -1,4 +1,5 @@
 // xbar_peri.v - 24 MHz domain crossbar (single-slave pass-through)
+`timescale 1ns/1ps
 
 module xbar_peri #(
   parameter ADDR_WIDTH   = 32,
