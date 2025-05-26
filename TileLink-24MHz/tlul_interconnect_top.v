@@ -1,6 +1,8 @@
 // tlul_interconnect_top.sv - Top-level interconnect for TL-UL  
 // 1:1 Master-Slave Interconnect 
 
+`include "xbar_main.v"
+`include "xbar_peri.v"
 
 `timescale 1ns/1ps
 

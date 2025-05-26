@@ -241,14 +241,10 @@ module tlul_interconnect_tb();
     @(posedge clk_24);
     slave_d_valid <= 1'b0;
 
-    #10000 $finish;
+    repeat(20) @(posedge clk_24);
+    $finish;
   end
   
-  initial begin
-  $dumpfile("waveform.vcd");
-  $dumpvars(0, tlul_interconnect_tb);
-end
-
 
 endmodule
 

@@ -83,6 +83,6 @@ module xbar_main #(
   end
 
 
-  always d_ready_in = d_ready;
+  assign d_ready_in = d_ready;
 
 endmodule
