@@ -108,12 +108,22 @@ module tilelink_cdc_adapter #(
   assign fifo_a_rd_en = a_valid_out && a_ready_out;
 
   // Unpack FIFO A read data (order matches packing above)
+/*
   assign a_opcode_out  = fifo_a_rd_data[CH_A_WIDTH-1 -: OPCODE_WIDTH];
   assign a_param_out   = fifo_a_rd_data[CH_A_WIDTH-OPCODE_WIDTH-1 -: PARAM_WIDTH];
   assign a_size_out    = fifo_a_rd_data[CH_A_WIDTH-OPCODE_WIDTH-PARAM_WIDTH-1 -: SIZE_WIDTH];
   assign a_source_out  = fifo_a_rd_data[CH_A_WIDTH-OPCODE_WIDTH-PARAM_WIDTH-SIZE_WIDTH-1 -: SRC_WIDTH];
   assign a_address_out = fifo_a_rd_data[CH_A_WIDTH-OPCODE_WIDTH-PARAM_WIDTH-SIZE_WIDTH-SRC_WIDTH-1 -: ADDR_WIDTH];
   assign a_mask_out    = fifo_a_rd_data[CH_A_WIDTH-OPCODE_WIDTH-PARAM_WIDTH-SIZE_WIDTH-SRC_WIDTH-ADDR_WIDTH-1 -: MASK_WIDTH];
+  assign a_data_out    = fifo_a_rd_data[DATA_WIDTH-1:0];
+*/
+
+  assign a_opcode_out  = fifo_a_rd_data[CH_A_WIDTH-2 -: OPCODE_WIDTH];
+  assign a_param_out   = fifo_a_rd_data[CH_A_WIDTH-2 - OPCODE_WIDTH -: PARAM_WIDTH];
+  assign a_size_out    = fifo_a_rd_data[CH_A_WIDTH-2 - OPCODE_WIDTH - PARAM_WIDTH -: SIZE_WIDTH];
+  assign a_source_out  = fifo_a_rd_data[CH_A_WIDTH-2 - OPCODE_WIDTH - PARAM_WIDTH - SIZE_WIDTH -: SRC_WIDTH];
+  assign a_address_out = fifo_a_rd_data[CH_A_WIDTH-2 - OPCODE_WIDTH - PARAM_WIDTH - SIZE_WIDTH - SRC_WIDTH -: ADDR_WIDTH];
+  assign a_mask_out    = fifo_a_rd_data[CH_A_WIDTH-2 - OPCODE_WIDTH - PARAM_WIDTH - SIZE_WIDTH - SRC_WIDTH - ADDR_WIDTH -: MASK_WIDTH];
   assign a_data_out    = fifo_a_rd_data[DATA_WIDTH-1:0];
 
   // ----- Channel D FIFO (24 MHz → 100 MHz) -----
@@ -151,7 +161,9 @@ module tilelink_cdc_adapter #(
 
   assign d_valid_out = !fifo_d_empty;
   assign fifo_d_rd_en = d_valid_out && d_ready_out;
+
   // Unpack FIFO D data
+/*
   assign d_opcode_out = fifo_d_rd_data[CH_D_WIDTH-1 -: OPCODE_WIDTH];
   assign d_param_out  = fifo_d_rd_data[CH_D_WIDTH-OPCODE_WIDTH-1 -: PARAM_WIDTH];
   assign d_size_out   = fifo_d_rd_data[CH_D_WIDTH-OPCODE_WIDTH-PARAM_WIDTH-1 -: SIZE_WIDTH];
@@ -159,6 +171,15 @@ module tilelink_cdc_adapter #(
   assign d_sink_out   = fifo_d_rd_data[CH_D_WIDTH-OPCODE_WIDTH-PARAM_WIDTH-SIZE_WIDTH-SRC_WIDTH-1 -: SINK_WIDTH];
   assign d_data_out   = fifo_d_rd_data[DATA_WIDTH-1:0];
   assign d_error_out  = fifo_d_rd_data[0]; // LSB is error flag
+*/
+
+  assign d_opcode_out = fifo_d_rd_data[CH_D_WIDTH-2 -: OPCODE_WIDTH];
+  assign d_param_out  = fifo_d_rd_data[CH_D_WIDTH-2 - OPCODE_WIDTH -: PARAM_WIDTH];
+  assign d_size_out   = fifo_d_rd_data[CH_D_WIDTH-2 - OPCODE_WIDTH - PARAM_WIDTH -: SIZE_WIDTH];
+  assign d_source_out = fifo_d_rd_data[CH_D_WIDTH-2 - OPCODE_WIDTH - PARAM_WIDTH - SIZE_WIDTH -: SRC_WIDTH];
+  assign d_sink_out   = fifo_d_rd_data[CH_D_WIDTH-2 - OPCODE_WIDTH - PARAM_WIDTH - SIZE_WIDTH - SRC_WIDTH -: SINK_WIDTH];
+  assign d_data_out   = fifo_d_rd_data[DATA_WIDTH-1:0];
+  assign d_error_out  = fifo_d_rd_data[0];
 
   // ------------------- Debug: Monitor FIFO Transfers -------------------
   // Channel A (100MHz side write)
