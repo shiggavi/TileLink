@@ -31,7 +31,8 @@ module xbar_main #(
   output reg 		          d_source,
   output reg                      d_sink,
   output reg [DATA_WIDTH-1:0]     d_data,
-  output reg                      d_error,
+  output reg                      d_error
+/*
   // Outputs to CDC adapter (Channel A)
   output reg             a_valid_out,
   input                  a_ready_out,
@@ -52,6 +53,7 @@ module xbar_main #(
   input                     d_sink_in,
   input  [DATA_WIDTH-1:0]   d_data_in,
   input                  d_error_in
+*/
 );
 
   // --- Channel A Forwarding ---

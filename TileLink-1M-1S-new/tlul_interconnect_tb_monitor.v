@@ -10,47 +10,38 @@ module tlul_interconnect_monitor #(
   parameter OPCODE_WIDTH = 3,
   parameter PARAM_WIDTH  = 3
 )(
-  input                         clk_24,
-  input                         clk_100,
-  input                         reset,
+
   
   // Master Interface Signals (DUT -> Master)
-  input                    master_a_valid,
-  input                    master_a_ready,
-  input  [ADDR_WIDTH-1:0]     master_a_address,
-  input  [DATA_WIDTH-1:0]     master_a_data,
-  input  [OPCODE_WIDTH-1:0]   master_a_opcode,
-  input  [SIZE_WIDTH-1:0]     master_a_size,
-  
-  input                    master_d_valid,
-  input  [DATA_WIDTH-1:0]     master_d_data,
-  input  [OPCODE_WIDTH-1:0]   master_d_opcode,
-  input  [SIZE_WIDTH-1:0]     master_d_size,
-  input                    master_d_error,
-input [PARAM_WIDTH-1:0]    master_d_param,
-input master_d_source,
-input master_d_sink,
+  input reg                      master_a_ready,
 
 
+  // Interconnect -> Master (TileLink Channel D response)
+  input reg                      master_d_valid,
 
-  // Slave Interface Signals (Slave -> DUT)
-  input                        slave_a_valid,
-  input                        slave_a_ready,
-  input  [ADDR_WIDTH-1:0]    slave_a_address,
-  input  [DATA_WIDTH-1:0]    slave_a_data,
-  input  [OPCODE_WIDTH-1:0]    slave_a_opcode,
-  input  [SIZE_WIDTH-1:0]      slave_a_size,
-input [PARAM_WIDTH-1:0]  slave_a_param,
-input slave_a_source,
-input [MASK_WIDTH-1:0]   slave_a_mask,
+  input reg [OPCODE_WIDTH-1:0]   master_d_opcode,
+  input reg [PARAM_WIDTH-1:0]    master_d_param,
+  input reg [SIZE_WIDTH-1:0]     master_d_size,
+  input reg 		          master_d_source,
+  input reg                      master_d_sink,
+  input reg [DATA_WIDTH-1:0]     master_d_data,
+  input reg                      master_d_error,
 
+  // --------------------- Slave Socket Interface ---------------------
+  // Interconnect -> Slave (Channel A request)
+  input reg               slave_a_valid,
 
-input slave_d_ready,
-  input                        slave_d_valid,
-  input  [DATA_WIDTH-1:0]      slave_d_data,
-  input  [OPCODE_WIDTH-1:0]    slave_d_opcode,
-  input  [SIZE_WIDTH-1:0]      slave_d_size,
-  input                        slave_d_error
+  input reg [OPCODE_WIDTH-1:0] slave_a_opcode,
+  input reg [PARAM_WIDTH-1:0]  slave_a_param,
+  input reg [SIZE_WIDTH-1:0]   slave_a_size,
+  input reg 		        slave_a_source,
+  input reg [ADDR_WIDTH-1:0]   slave_a_address,
+  input reg [MASK_WIDTH-1:0]   slave_a_mask,
+  input reg [DATA_WIDTH-1:0]   slave_a_data,
+
+  // Slave -> Interconnect (Channel D response)
+
+  input reg                 slave_d_ready,
 );
 
 

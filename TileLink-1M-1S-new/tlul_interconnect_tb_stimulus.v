@@ -25,18 +25,20 @@ module tlul_interconnect_tb(
   output reg [MASK_WIDTH-1:0]   master_a_mask,
   output reg [DATA_WIDTH-1:0]   master_a_data,
   output reg                 master_d_ready,
-  output reg                 slave_a_valid,
-  output reg [OPCODE_WIDTH-1:0] slave_a_opcode,
-  output reg [PARAM_WIDTH-1:0]  slave_a_param,
-  output reg [SIZE_WIDTH-1:0]   slave_a_size,
-  output reg 		        slave_a_source,
-  output reg [ADDR_WIDTH-1:0] slave_a_address,
-  output reg [MASK_WIDTH-1:0] slave_a_mask,
-  output reg [DATA_WIDTH-1:0] slave_a_data,
-  output reg                  slave_d_ready
+
+  output reg                 slave_a_ready,
+  output reg                      slave_d_valid,
+  output reg  [OPCODE_WIDTH-1:0] slave_d_opcode,
+  output reg   [PARAM_WIDTH-1:0]  slave_d_param,
+  output reg   [SIZE_WIDTH-1:0]   slave_d_size,
+  output reg   		     slave_d_source,
+  output reg                      slave_d_sink,
+  output reg   [DATA_WIDTH-1:0]   slave_d_data,
+  output reg                      slave_d_error
 );
 
   // Internal wires for DUT-driven signals (inputs to testbench)
+  /*
   wire                    master_a_ready;
   wire                    master_d_valid;
   wire [OPCODE_WIDTH-1:0] master_d_opcode;
@@ -56,7 +58,7 @@ module tlul_interconnect_tb(
   wire 		            slave_d_sink;
   wire [DATA_WIDTH-1:0]     slave_d_data;
   wire                      slave_d_error;
-
+*/
   //===========================================================================  
   // Clock Generation  
   //===========================================================================  

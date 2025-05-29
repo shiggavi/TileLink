@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 `include "tlul_interconnect_top.v"
-module tlul_interconnect_tb();
+module tlul_tb();
 
   // Clock and reset signals
   reg clk_100, clk_24, reset;
