@@ -1,5 +1,0 @@
-`include "tlul_interconnect_top.v"
-`include "xbar_main.v"
-`include "xbar_peri.v"
-`include "tilelink_cdc_adapter.v"
-`include "async_fifo.v"
