@@ -76,9 +76,11 @@ module tlul_slave #(
     always @(posedge clk_24 or negedge rst_n) begin
        if (!rst_n) begin
             for (i=0; i<MEM_DEPTH; i=i+1) memory[i] <= 32'h0;
-        end
+       end else if (a_valid && is_write && address_valid)
+            memory[word_index] = a_data;
     end
 
+/*
     // Combinational write: perform write in the same cycle as a_valid
     // Normal (full) write: overwrite the entire word if a_valid, is_write, and address_valid
     always @(*) begin
@@ -86,7 +88,7 @@ module tlul_slave #(
             memory[word_index] = a_data;
         end
     end
-
+*/
 
     // FSM combinational logic
     always @(*) begin
