@@ -75,9 +75,11 @@ module tlul_slave #(
     // Synchronous reset for memory
     always @(posedge clk_24 or negedge rst_n) begin
        if (!rst_n) begin
-            for (i=0; i<MEM_DEPTH; i=i+1) memory[i] <= 32'h0;
-       end else if (a_valid && is_write && address_valid)
-            memory[word_index] = a_data;
+            for (i=0; i<MEM_DEPTH; i=i+1) 
+                memory[i] = 32'h0;
+       end else if (a_valid && is_write && address_valid) begin
+           memory[word_index] <= a_data;
+       end
     end
 
 /*
