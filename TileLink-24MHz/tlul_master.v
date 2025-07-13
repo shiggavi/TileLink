@@ -54,13 +54,6 @@ module tlul_master #(
     reg state, next_state;
     //reg [1:0] prev_state;
 
-/*
-    reg [1:0] tx_type_reg;
-    reg [ADDR_WIDTH-1:0] addr_reg;
-    reg [SIZE_WIDTH-1:0] size_reg;
-    reg [DATA_WIDTH-1:0] wdata_reg;
-    reg [MASK_WIDTH-1:0] wmask_reg;
-*/
 
     // FSM state register and prev_state for transition detection
     always @(posedge clk_24 or negedge rst_n) begin
@@ -84,25 +77,6 @@ module tlul_master #(
             end
         endcase
     end
-
-/*
-    // Latch transaction parameters
-    always @(posedge clk_24 or negedge rst_n) begin
-        if (!rst_n) begin
-            tx_type_reg <= 0;
-            addr_reg    <= 0;
-            size_reg    <= 0;
-            wdata_reg   <= 0;
-            wmask_reg   <= 0;
-        end else if (state == S_IDLE && start_trans) begin
-            tx_type_reg <= trans_type;
-            addr_reg    <= address;
-            size_reg    <= size;
-            wdata_reg   <= write_data;
-            wmask_reg   <= write_mask;
-        end
-    end
-*/
 
     // Output and handshake logic
     always @(*) begin
@@ -134,28 +108,8 @@ module tlul_master #(
         endcase
     end
 
-/*
-    // Pulse trans_done for one clock when transaction completes
-    always @(posedge clk_24 or negedge rst_n) begin
-        if (!rst_n)
-            trans_done <= 1'b0;
-        else if (prev_state == S_WAIT_RESP && state == S_IDLE)
-            trans_done <= 1'b1;
-        else
-            trans_done <= 1'b0;
-    end
-*/
-
     // Capture read data
 
     assign read_data = (state == WAIT_RESP && d_valid && d_ready && d_opcode == AccessAckData) ? d_data : {DATA_WIDTH{1'b0}};
    
-/*   
-    always @(posedge clk_24 or negedge rst_n) begin
-        if (!rst_n)
-            read_data <= 0;
-        else if (state == WAIT_RESP && d_valid && d_ready && d_opcode == AccessAckData)
-            read_data <= d_data;
-    end
-*/
 endmodule
