@@ -82,16 +82,6 @@ module tlul_slave #(
        end
     end
 
-/*
-    // Combinational write: perform write in the same cycle as a_valid
-    // Normal (full) write: overwrite the entire word if a_valid, is_write, and address_valid
-    always @(*) begin
-        if (a_valid && is_write && address_valid) begin
-            memory[word_index] = a_data;
-        end
-    end
-*/
-
     // FSM combinational logic
     always @(*) begin
         next_state = state;
