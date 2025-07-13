@@ -46,14 +46,10 @@ module tlul_master #(
     localparam [2:0] AccessAckData = 3'h4;
 
     // FSM states
-    //localparam S_IDLE      = 2'b00;
     localparam SEND_REQ  = 1'b0;
     localparam WAIT_RESP = 1'b1;
 
-
     reg state, next_state;
-    //reg [1:0] prev_state;
-
 
     // FSM state register and prev_state for transition detection
     always @(posedge clk_24 or negedge rst_n) begin
